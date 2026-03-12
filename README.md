@@ -1,5 +1,7 @@
 # cinexg-eda
 
+[![Python package](https://github.com/yourusername/cinexg-eda/actions/workflows/python-package.yml/badge.svg)](https://github.com/yourusername/cinexg-eda/actions/workflows/python-package.yml)
+
 cinexg-eda is a Python package for automated exploratory data analysis (EDA).
 It quickly analyzes datasets and generates clear statistical summaries, data quality checks, and visual reports with minimal code.
 

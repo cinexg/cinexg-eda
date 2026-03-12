@@ -75,7 +75,7 @@ def report(file_path, output="report.html"):
     
     # Conditionally add the histogram if it exists
     if image_paths.get('hist_plot'):
-        html_content += f'<img src="{image_paths['hist_plot']}" alt="Histograms">'
+        html_content += f'<img src="{image_paths["hist_plot"]}" alt="Histograms">'
         
     # Conditionally add the correlation map if it exists
     if image_paths.get('corr_plot'):

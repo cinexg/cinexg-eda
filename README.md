@@ -42,6 +42,30 @@ import cinexg_eda
 cinexg_eda.report("your_dataset.csv", output="eda_report.html")
 ```
 
+## 🧠 AI Executive Summary (Optional)
+
+`cinexg-eda` integrates with Google's Gemini 2.5 AI to generate a plain-English executive summary of your dataset, explaining potential machine learning use cases and data quality warnings.
+
+To enable this feature, you just need a free Gemini API key:
+
+1. Get a free API key from [Google AI Studio](https://aistudio.google.com/).
+2. Set it as an environment variable on your machine.
+
+**For Windows (PowerShell):**
+```powershell
+$env:GEMINI_API_KEY="your_api_key_here"
+```
+**For Mac/Linux:**
+```powershell
+export GEMINI_API_KEY="your_api_key_here"
+```
+
+Once the key is set, cinexg-eda will automatically detect it and inject the AI insights into your HTML dashboard.
+If no key is found, the package gracefully skips the AI step and generates the standard statistical report.
+
+🔒 **Privacy First:** Your raw data is never sent to the LLM. `cinexg-eda` only transmits the statistical metadata (column names, missing value percentages, and math summaries) to generate the report.
+
+
 This creates an interactive HTML dashboard containing:
 
 * dataset statistics

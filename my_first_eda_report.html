@@ -1,0 +1,65 @@
+
+    <!DOCTYPE html>
+    <html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Cinexg-EDA Report</title>
+        <style>
+            body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; margin: 40px; background-color: #f4f7f6; color: #333; }
+            h1, h2, h3 { color: #2c3e50; border-bottom: 2px solid #3498db; padding-bottom: 5px; }
+            .container { background: white; padding: 30px; border-radius: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); max-width: 1000px; margin: auto; }
+            .stats-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+            .alert { background-color: #ffeaa7; padding: 10px; border-left: 5px solid #fdcb6e; margin-bottom: 10px; }
+            img { max-width: 100%; border: 1px solid #ddd; border-radius: 4px; margin-top: 15px; }
+        </style>
+    </head>
+    <body>
+        <div class="container">
+            <h1>📊 Cinexg-EDA Automated Report</h1>
+            
+            <div style="background-color: #e8f4f8; padding: 20px; border-left: 5px solid #3498db; margin-bottom: 25px; border-radius: 4px;">
+                <h2 style="margin-top: 0; color: #2980b9;">✨ AI Executive Summary</h2>
+                <p style="white-space: pre-wrap; line-height: 1.6; font-size: 1.1em;">This dataset appears to be focused on human resources or career progression analytics, with features like `age` and `years_experience` aimed at predicting `salary`. The automated EDA suggests `salary` as the target variable for a classification task, implying that `salary` is represented in discrete categories rather than as a continuous numerical value. This frames the problem as predicting a salary tier or band.
+
+A primary warning is the extremely high correlations (above 0.97) observed between `age`, `salary`, and `years_experience`. While this suggests strong predictive power, a junior data scientist should thoroughly investigate potential data leakage, especially given the minuscule dataset size of 10 rows, which can lead to spurious correlations and inflate model performance estimates. The tight relationship between `age` and `years_experience` also indicates potential multicollinearity. Additionally, the classification task for `salary` warrants verification; understanding if `salary` is genuinely categorical or was binned from continuous values is crucial before model training, as the high correlations might be driving a clear separation of these categories.</p>
+            </div>
+
+            <h2>1. Dataset Overview</h2>
+            <div class="stats-grid">
+                <div>
+                    <p><strong>Rows:</strong> 10</p>
+                    <p><strong>Columns:</strong> 5</p>
+                </div>
+                <div>
+                    <p><strong>Numerical Columns:</strong> 3</p>
+                    <p><strong>Categorical Columns:</strong> 1</p>
+                </div>
+            </div>
+
+            <h2>2. Machine Learning Suggestions</h2>
+            <div class="alert">
+                <p><strong>Guessed Target Column:</strong> salary</p>
+                <p><strong>Probable ML Task:</strong> Classification</p>
+                <p><strong>Suggested Models:</strong> Logistic Regression, Random Forest Classifier, Gradient Boosting Classifier</p>
+            </div>
+
+            <h2>3. Data Quality Alerts</h2>
+            <ul>
+                <li><strong>Duplicate Rows:</strong> 0</li>
+                <li><strong>Constant Columns:</strong> None detected</li>
+            </ul>
+
+            <h2>4. Visualizations</h2>
+            <h3>Missing Values</h3>
+            <img src="eda_assets\missing_values.png" alt="Missing Values Heatmap">
+            
+            <h3>Numeric Distributions</h3>
+            <img src="eda_assets\numeric_distributions.png" alt="Histograms">
+            <h3>Correlation Heatmap</h3>
+            <img src="eda_assets\correlation_heatmap.png" alt="Correlation Heatmap">
+        
+        </div>
+    </body>
+    </html>
+    

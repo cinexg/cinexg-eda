@@ -1,0 +1,11 @@
+age,salary,department,is_remote,years_experience
+25.0,50000.0,IT,True,1
+30.0,60000.0,HR,False,3
+,,Sales,True,2
+22.0,45000.0,IT,True,1
+40.0,80000.0,Marketing,False,10
+35.0,70000.0,HR,False,5
+28.0,55000.0,IT,True,4
+50.0,90000.0,Sales,False,15
+45.0,85000.0,Marketing,True,12
+33.0,65000.0,HR,False,6

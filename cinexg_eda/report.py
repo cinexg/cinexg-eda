@@ -1,6 +1,7 @@
 import os
 from .analyzer import analyze, _load_dataset
 from .visualization import generate_visualizations
+from .llm_explainer import generate_explanation 
 
 def report(file_path, output="report.html"):
     """
@@ -12,6 +13,9 @@ def report(file_path, output="report.html"):
     # We pass the file path directly to our analyzer
     results = analyze(file_path)
     
+    print("🧠 Generating AI executive summary (this takes a few seconds)...")
+    ai_insights = generate_explanation(results)
+
     # 2. Load the dataframe just to pass it to the visualization generator
     df = _load_dataset(file_path)
     
@@ -41,6 +45,11 @@ def report(file_path, output="report.html"):
         <div class="container">
             <h1>📊 Cinexg-EDA Automated Report</h1>
             
+            <div style="background-color: #e8f4f8; padding: 20px; border-left: 5px solid #3498db; margin-bottom: 25px; border-radius: 4px;">
+                <h2 style="margin-top: 0; color: #2980b9;">✨ AI Executive Summary</h2>
+                <p style="white-space: pre-wrap; line-height: 1.6; font-size: 1.1em;">{ai_insights}</p>
+            </div>
+
             <h2>1. Dataset Overview</h2>
             <div class="stats-grid">
                 <div>

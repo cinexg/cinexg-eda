@@ -27,3 +27,6 @@ dependencies = [
     "scikit-learn",
     "google-generativeai"
 ]
+
+[tool.setuptools]
+packages = ["cinexg_eda"]

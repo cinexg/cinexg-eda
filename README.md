@@ -137,6 +137,7 @@ cinexg-eda
 │   ├── __init__.py
 │   ├── analyzer.py
 │   ├── visualization.py
+│   ├── llm_explainer.py
 │   ├── report.py
 │   └── utils.py
 │

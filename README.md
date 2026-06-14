@@ -39,7 +39,7 @@ Generate a full exploratory data analysis report in two lines of code.
 ```python
 import cinexg_eda
 
-cinexg_eda.report("your_dataset.csv", output="eda_report.html")
+cinexg_eda.report("your_dataset.csv" , output="eda_report.html")
 ```
 
 ## 🧠 AI Executive Summary (Optional)

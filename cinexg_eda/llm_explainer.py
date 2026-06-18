@@ -10,7 +10,7 @@ def generate_explanation(analysis_results, api_key=None):
     except ImportError:
         return "⚠️ LLM explanation requires the 'google-generativeai' package."
 
-    # Industry standard: check if the user passed a key, otherwise look for an environment variable
+    # check if the user passed a key, otherwise look for an environment variable
     key = api_key or os.environ.get("GEMINI_API_KEY")
     
     if not key:

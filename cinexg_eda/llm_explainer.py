@@ -18,7 +18,7 @@ def generate_explanation(analysis_results, api_key=None):
 
     try:
         genai.configure(api_key=key)
-        # Using Gemini 1.5 Flash because it is incredibly fast and cheap/free for these text tasks
+        # Using Gemini 1.5 Flash 
         model = genai.GenerativeModel('gemini-2.5-flash') 
 
         # We only send the metadata (stats, column names), NEVER the raw rows, to protect user data privacy

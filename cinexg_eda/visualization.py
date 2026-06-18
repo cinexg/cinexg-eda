@@ -14,7 +14,6 @@ def generate_visualizations(df, output_dir="eda_visualizations"):
     print(f"\n📊 Generating visualizations in '{output_dir}/'...")
 
     # 2. Missing Value Heatmap
-    # This creates a visual map where missing data stands out as a different color
     plt.figure(figsize=(10, 6))
     sns.heatmap(df.isnull(), cbar=False, cmap='viridis', yticklabels=False)
     plt.title("Missing Values Heatmap")

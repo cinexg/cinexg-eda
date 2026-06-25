@@ -16,8 +16,6 @@ def report(file_path, output="report.html"):
 
     df = _load_dataset(file_path)
     
-    # 3. Generate the plots and get their file paths
-    # We'll put them in an 'assets' folder right next to the report
     image_paths = generate_visualizations(df, output_dir="eda_assets")
     
     # 4. Build the HTML Template

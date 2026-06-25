@@ -9,14 +9,11 @@ def report(file_path, output="report.html"):
     """
     print(f"🚀 Starting full EDA report generation for '{file_path}'...")
     
-    # 1. Run the core analysis (this returns the big dictionary of stats)
-    # We pass the file path directly to our analyzer
     results = analyze(file_path)
     
     print("🧠 Generating AI executive summary (this takes a few seconds)...")
     ai_insights = generate_explanation(results)
 
-    # 2. Load the dataframe just to pass it to the visualization generator
     df = _load_dataset(file_path)
     
     # 3. Generate the plots and get their file paths

@@ -5,18 +5,15 @@ def _load_dataset(data_input):
     """
     Internal helper function to load a dataset from a file path or return it if it's already a DataFrame.
     """
-    # 1. If the user already passed a Pandas DataFrame, just return it
     if isinstance(data_input, pd.DataFrame):
         return data_input
     
-    # 2. If the user passed a string (file path)
     if isinstance(data_input, str):
         if not os.path.exists(data_input):
             raise FileNotFoundError(f"The file '{data_input}' does not exist. Please check the path.")
             
         file_extension = os.path.splitext(data_input)[1].lower()
         
-        # Route based on file extension
         if file_extension == '.csv':
             return pd.read_csv(data_input)
         elif file_extension in ['.xls', '.xlsx']:
@@ -24,7 +21,6 @@ def _load_dataset(data_input):
         else:
             raise ValueError(f"Unsupported file format '{file_extension}'. Please provide a CSV or Excel file.")
     
-    # 3. If they passed something totally wrong (like an integer or a list)
     raise TypeError("Input must be a file path (string) or a pandas DataFrame.")
 
 def analyze(data_input):

@@ -26,11 +26,15 @@ jobs:
     - name: Install dependencies
       run: |
         python -m pip install --upgrade pip
-        pip install pytest
-        # This installs your cinexg-eda package and all its dependencies from pyproject.toml
-        pip install . 
-        
+        pip install pytest ruff
+        # This installs your statlens package and all its dependencies from pyproject.toml
+        pip install .
+
+    - name: Lint with ruff
+      run: |
+        ruff check .
+
     - name: Test with pytest
       run: |
-        # Runs the tests/test_analyzer.py file automatically
+        # Runs the tests/ directory automatically
         pytest

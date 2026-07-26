@@ -1,4 +1,4 @@
-import cinexg_eda
+import statlens
 import pandas as pd
 import numpy as np
 
@@ -16,4 +16,4 @@ df = pd.DataFrame(dummy_data)
 df.to_csv("test_dataset.csv", index=False)
 
 # Run the final report generator
-cinexg_eda.report("test_dataset.csv", output="my_first_eda_report.html")
+statlens.report("test_dataset.csv", output="my_first_eda_report.html")

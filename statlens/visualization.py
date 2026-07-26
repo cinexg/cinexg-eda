@@ -3,7 +3,7 @@ import matplotlib.pyplot as plt
 import seaborn as sns
 import pandas as pd
 
-def generate_visualizations(df, output_dir="eda_visualizations"):
+def generate_visualizations(df: pd.DataFrame, output_dir: str = "eda_visualizations") -> dict:
     """
     Generates and saves standard EDA plots: Missing values, Correlation Heatmap, and Histograms.
     """

@@ -1,7 +1,12 @@
 venv/
+.venv/
 __pycache__/
 *.pyc
 .pytest_cache/
-cinexg_eda.egg-info/
+.ruff_cache/
+statlens.egg-info/
 dist/
 build/
+eda_assets/
+test_dataset.csv
+my_first_eda_report.html

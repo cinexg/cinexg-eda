@@ -1,7 +1,8 @@
 import os
 import json
+from typing import Optional
 
-def generate_explanation(analysis_results, api_key=None):
+def generate_explanation(analysis_results: dict, api_key: Optional[str] = None) -> str:
     """
     Takes the EDA statistical results and uses an LLM to generate a plain-English summary.
     """

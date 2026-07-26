@@ -3,8 +3,8 @@ requires = ["setuptools>=61.0"]
 build-backend = "setuptools.build_meta"
 
 [project]
-name = "cinexg-eda"
-version = "0.2.0"
+name = "statlens"
+version = "0.1.0"
 authors = [
   { name="Gaurav Raj Singh", email="connect.cinexg@gmail.com" },
 ]
@@ -28,5 +28,23 @@ dependencies = [
     "google-generativeai"
 ]
 
+[project.urls]
+Homepage = "https://github.com/gauravxsuvo/Statlens"
+Repository = "https://github.com/gauravxsuvo/Statlens"
+
+[project.scripts]
+statlens = "statlens.cli:main"
+
 [tool.setuptools]
-packages = ["cinexg_eda"]
+packages = ["statlens"]
+
+[tool.setuptools.package-data]
+statlens = ["templates/*.html"]
+
+[tool.ruff]
+line-length = 120
+
+[tool.ruff.lint]
+# Keep this to real correctness issues (pyflakes) and basic syntax/style errors,
+# not import-sorting or style-modernization opinions.
+select = ["E4", "E7", "E9", "F"]

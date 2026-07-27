@@ -1,5 +1,7 @@
 venv/
 .venv/
+CLAUDE.md
+AGENTS.md
 __pycache__/
 *.pyc
 .pytest_cache/

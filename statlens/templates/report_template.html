@@ -1,59 +1,802 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-theme="light">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Statlens Report</title>
-    <style>
-        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; margin: 40px; background-color: #f4f7f6; color: #333; }
-        h1, h2, h3 { color: #2c3e50; border-bottom: 2px solid #3498db; padding-bottom: 5px; }
-        .container { background: white; padding: 30px; border-radius: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); max-width: 1000px; margin: auto; }
-        .stats-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
-        .alert { background-color: #ffeaa7; padding: 10px; border-left: 5px solid #fdcb6e; margin-bottom: 10px; }
-        img { max-width: 100%; border: 1px solid #ddd; border-radius: 4px; margin-top: 15px; }
-    </style>
+<meta charset="UTF-8">
+<script>
+(function () {
+  try {
+    var t = localStorage.getItem('statlens-report-theme');
+    if (t === 'dark') document.documentElement.setAttribute('data-theme', 'dark');
+  } catch (e) {}
+})();
+</script>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Statlens Report</title>
+<style>
+:root{
+  --bg:#FBFBFD;
+  --bg-2:#F4F4F7;
+  --surface:#FFFFFF;
+  --surface-2:#F5F5F7;
+  --text:#1D1D1F;
+  --text-2:#3A3A3E;
+  --muted:#6E6E73;
+  --rule:rgba(0,0,0,.09);
+  --rule-2:rgba(0,0,0,.16);
+  --cool:#0A5FD6;
+  --warm:#C0431F;
+  --cool-soft:rgba(10,95,214,.09);
+  --warm-soft:rgba(192,67,31,.09);
+  --shadow-sm:0 1px 2px rgba(0,0,0,.04),0 6px 18px -12px rgba(0,0,0,.18);
+  --f-sans:-apple-system,BlinkMacSystemFont,"Segoe UI Variable Text","Segoe UI",system-ui,sans-serif;
+  --f-mono:ui-monospace,SFMono-Regular,"SF Mono",Menlo,Consolas,monospace;
+  --pad:clamp(20px,4.5vw,64px);
+  --gap:clamp(14px,1.8vw,22px);
+  --r-sm:10px;
+  --r-md:16px;
+  --ease:cubic-bezier(.22,.61,.36,1);
+  --nav-h:60px;
+}
+:root[data-theme="dark"]{
+  --bg:#07080A;
+  --bg-2:#0C0E12;
+  --surface:#111318;
+  --surface-2:#171A20;
+  --text:#F5F5F7;
+  --text-2:#D6D8DE;
+  --muted:#94969D;
+  --rule:rgba(255,255,255,.10);
+  --rule-2:rgba(255,255,255,.20);
+  --cool:#6FA8FF;
+  --warm:#FF8B66;
+  --cool-soft:rgba(111,168,255,.12);
+  --warm-soft:rgba(255,139,102,.12);
+  --shadow-sm:0 1px 2px rgba(0,0,0,.4),0 8px 24px -16px rgba(0,0,0,.7);
+}
+*,*::before,*::after{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{
+  margin:0;background:var(--bg);color:var(--text);
+  font-family:var(--f-sans);font-size:16px;line-height:1.6;letter-spacing:-.011em;
+  -webkit-font-smoothing:antialiased;transition:background-color .3s var(--ease),color .3s var(--ease);
+}
+img,svg{display:block;max-width:100%}
+a{color:inherit}
+h1,h2,h3,p,dl,dd{margin:0}
+button{font:inherit;color:inherit;background:none;border:0;cursor:pointer}
+select,input{font:inherit;color:inherit}
+.wrap{width:100%;max-width:1080px;margin:0 auto;padding-inline:var(--pad)}
+
+.nav{position:sticky;top:0;z-index:20;background:var(--bg);border-bottom:1px solid var(--rule)}
+.nav-in{display:flex;align-items:center;gap:var(--gap);height:var(--nav-h);max-width:1080px;margin:0 auto;padding-inline:var(--pad)}
+.brand{display:flex;align-items:center;gap:.5em;font-weight:600;letter-spacing:-.02em;flex:none}
+.brand-mark{width:22px;height:22px;color:var(--cool);flex:none}
+.nav-meta{display:flex;flex-direction:column;margin-left:.9em;line-height:1.3;min-width:0}
+.nav-meta .fname{font-family:var(--f-mono);font-size:.82rem;font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.nav-meta .fmeta{font-size:.72rem;color:var(--muted)}
+.nav-act{display:flex;align-items:center;gap:.6em;margin-left:auto;flex:none}
+.icon-btn{display:grid;place-items:center;width:36px;height:36px;flex:none;border:1px solid var(--rule);border-radius:11px;color:var(--muted);transition:color .2s var(--ease),border-color .2s var(--ease),background-color .2s var(--ease)}
+.icon-btn:hover{color:var(--text);border-color:var(--rule-2);background:var(--surface-2)}
+.icon-btn svg{width:16px;height:16px}
+.theme-ic{display:grid}
+.theme-ic svg{grid-area:1/1;transition:opacity .2s var(--ease)}
+.i-moon{opacity:0}
+:root[data-theme="dark"] .i-sun{opacity:0}
+:root[data-theme="dark"] .i-moon{opacity:1}
+.btn{background:var(--text);color:var(--bg);padding:.6em 1.2em;border-radius:99px;font-weight:500;font-size:.88rem;white-space:nowrap}
+.btn:hover{opacity:.85}
+
+.hero{padding-block:clamp(36px,6vw,72px) clamp(24px,4vw,40px)}
+.eyebrow{display:flex;align-items:center;gap:.6em;font-family:var(--f-mono);font-size:.7rem;font-weight:500;letter-spacing:.15em;text-transform:uppercase;color:var(--muted);margin-bottom:1em}
+.dot{width:6px;height:6px;border-radius:50%;background:var(--cool);flex:none}
+.display{font-size:clamp(1.9rem,4.2vw,3.1rem);font-weight:600;line-height:1.08;letter-spacing:-.03em;word-break:break-word}
+.lede{color:var(--muted);font-size:1.02rem;margin-top:.6em;max-width:60ch}
+
+.strip{border-block:1px solid var(--rule);background:var(--bg-2)}
+.strip-in{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:var(--gap);padding-block:clamp(24px,3vw,36px)}
+.stat{display:flex;flex-direction:column;gap:.2em}
+.stat .n{font-size:clamp(1.5rem,2.6vw,2.1rem);font-weight:600;letter-spacing:-.03em;font-variant-numeric:tabular-nums}
+.stat .l{font-size:.78rem;color:var(--muted)}
+
+.sec{padding-block:clamp(40px,5vw,64px)}
+.sec-head{margin-bottom:clamp(22px,3vw,32px)}
+.h2{font-size:clamp(1.3rem,2.4vw,1.7rem);font-weight:600;letter-spacing:-.02em}
+
+.card{background:var(--surface);border:1px solid var(--rule);border-radius:var(--r-md);padding:clamp(20px,2.4vw,28px);box-shadow:var(--shadow-sm)}
+.card.highlight{border-color:color-mix(in srgb,var(--cool) 30%,var(--rule));background:linear-gradient(180deg,var(--cool-soft),transparent 60%),var(--surface)}
+.card-ic{display:grid;place-items:center;width:36px;height:36px;border-radius:11px;background:var(--cool-soft);color:var(--cool);margin-bottom:.7em}
+.card-ic svg{width:17px;height:17px}
+.card h3{font-size:1.05rem;font-weight:600;letter-spacing:-.02em;margin-bottom:.6em}
+.card p{color:var(--text-2);font-size:.95rem;line-height:1.65;white-space:pre-wrap}
+
+.meta{display:grid;gap:.1em;margin-top:1em}
+.meta>div{display:grid;grid-template-columns:minmax(110px,.3fr) minmax(0,1fr);gap:1em;padding-block:.6em;border-top:1px solid var(--rule)}
+.meta dt{font-family:var(--f-mono);font-size:.68rem;letter-spacing:.08em;text-transform:uppercase;color:var(--cool);padding-top:.15em}
+.meta dd{margin:0;font-size:.88rem;color:var(--text-2);line-height:1.55}
+
+.chips{display:flex;flex-wrap:wrap;gap:.45em;margin-top:.4em}
+.chip{font-family:var(--f-mono);font-size:.74rem;border:1px solid var(--rule-2);border-radius:7px;padding:.32em .62em;background:var(--surface-2);color:var(--text)}
+
+.acc{border-top:1px solid var(--rule)}
+.ac{border-bottom:1px solid var(--rule)}
+.ac-t{display:flex;align-items:flex-start;gap:1em;width:100%;text-align:left;cursor:pointer;padding-block:clamp(16px,2vw,22px)}
+.ac-ic{display:grid;place-items:center;width:32px;height:32px;flex:none;border-radius:9px;background:var(--cool-soft);color:var(--cool)}
+.ac-ic svg{width:16px;height:16px}
+.ac-body{flex:1;min-width:0}
+.ac-title{font-weight:600;font-size:.98rem;letter-spacing:-.01em}
+.ac-s{font-size:.86rem;color:var(--muted);margin-top:.2em}
+.ac-x{position:relative;display:block;width:14px;height:14px;flex:none;color:var(--muted);margin-top:.35em}
+.ac-x i{position:absolute;left:0;top:6px;width:14px;height:1.5px;background:currentColor;border-radius:2px;transition:transform .35s var(--ease),opacity .25s var(--ease)}
+.ac-x i:last-child{transform:rotate(90deg)}
+.ac.open .ac-x i:last-child{transform:rotate(0);opacity:0}
+.ac-p{display:grid;grid-template-rows:0fr;transition:grid-template-rows .4s var(--ease)}
+.ac.open .ac-p{grid-template-rows:1fr}
+.ac-c{overflow:hidden}
+.ac-c-in{padding-bottom:clamp(16px,2vw,22px);padding-left:calc(32px + 1em)}
+
+.tabs{display:flex;flex-wrap:wrap;gap:.3em;border-bottom:1px solid var(--rule);margin-bottom:1.4em}
+.tab{padding:.6em 1em;border-radius:9px 9px 0 0;font-size:.88rem;color:var(--muted)}
+.tab:hover{color:var(--text)}
+.tab.on{color:var(--text);font-weight:500;background:var(--surface-2)}
+.viz-panel{display:none}
+.viz-panel.on{display:block}
+.viz-controls{display:flex;flex-wrap:wrap;align-items:center;gap:1em 1.6em;margin-bottom:1.2em;font-size:.86rem;color:var(--muted)}
+.viz-controls label{display:flex;align-items:center;gap:.5em}
+.viz-controls select{padding:.4em .6em;border:1px solid var(--rule);border-radius:8px;background:var(--surface)}
+.viz-controls input[type=range]{accent-color:var(--cool);width:160px}
+.viz-controls output{font-family:var(--f-mono);font-size:.8rem;color:var(--text)}
+.empty-note{color:var(--muted);font-size:.92rem;padding:1.4em 0}
+
+.heatmap-scroll{overflow-x:auto}
+.heatmap-svg text{font-family:var(--f-mono);fill:var(--muted)}
+
+.barchart{display:flex;align-items:flex-end;gap:3px;height:220px;border-bottom:1px solid var(--rule);padding-top:8px}
+.barchart .bar{flex:1;background:var(--cool);border-radius:3px 3px 0 0;min-width:2px;transition:height .25s var(--ease)}
+.barlabels{display:flex;justify-content:space-between;font-size:.72rem;color:var(--muted);margin-top:.4em;font-family:var(--f-mono)}
+
+.hbars{display:flex;flex-direction:column;gap:.55em}
+.hbar-row{display:grid;grid-template-columns:minmax(90px,.28fr) 1fr auto;align-items:center;gap:.8em;font-size:.84rem}
+.hbar-row .label{font-family:var(--f-mono);font-size:.78rem;color:var(--text-2);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.hbar-track{position:relative;height:9px;border-radius:99px;background:var(--surface-2);overflow:hidden;display:block}
+.hbar-fill{position:absolute;inset:0 auto 0 0;border-radius:99px;background:var(--warm);display:block}
+.hbar-row .val{font-family:var(--f-mono);font-size:.76rem;color:var(--muted);white-space:nowrap}
+
+.foot{border-top:1px solid var(--rule);padding-block:clamp(24px,3vw,36px)}
+.foot-in{display:flex;flex-wrap:wrap;align-items:center;gap:1em;font-size:.86rem;color:var(--muted)}
+.foot-brand{display:flex;align-items:center;gap:.5em;font-weight:600;color:var(--text)}
+.foot-mark{width:18px;height:18px;color:var(--cool)}
+
+@media (max-width:640px){
+  .nav-meta{display:none}
+  .ac-c-in{padding-left:0}
+}
+
+@media print{
+  .nav,.viz-controls,.tabs{display:none !important}
+  .viz-panel{display:block !important;margin-bottom:28px}
+  .ac-p{grid-template-rows:1fr !important}
+  .ac-c-in{padding-left:0}
+  body{background:#fff;color:#000}
+  .card,.ac{box-shadow:none}
+}
+</style>
 </head>
 <body>
-    <div class="container">
-        <h1>📊 Statlens Automated Report</h1>
-
-        <div style="background-color: #e8f4f8; padding: 20px; border-left: 5px solid #3498db; margin-bottom: 25px; border-radius: 4px;">
-            <h2 style="margin-top: 0; color: #2980b9;">✨ AI Executive Summary</h2>
-            <p style="white-space: pre-wrap; line-height: 1.6; font-size: 1.1em;">$ai_insights</p>
-        </div>
-
-        <h2>1. Dataset Overview</h2>
-        <div class="stats-grid">
-            <div>
-                <p><strong>Rows:</strong> $rows</p>
-                <p><strong>Columns:</strong> $columns</p>
-            </div>
-            <div>
-                <p><strong>Numerical Columns:</strong> $numerical_columns</p>
-                <p><strong>Categorical Columns:</strong> $categorical_columns</p>
-            </div>
-        </div>
-
-        <h2>2. Machine Learning Suggestions</h2>
-        <div class="alert">
-            <p><strong>Guessed Target Column:</strong> $target_column</p>
-            <p><strong>Probable ML Task:</strong> $ml_task</p>
-            <p><strong>Suggested Models:</strong> $suggested_models</p>
-        </div>
-
-        <h2>3. Data Quality Alerts</h2>
-        <ul>
-            <li><strong>Duplicate Rows:</strong> $duplicate_rows</li>
-            <li><strong>Constant Columns:</strong> $constant_columns</li>
-        </ul>
-
-        <h2>4. Visualizations</h2>
-        <h3>Missing Values</h3>
-        <img src="$missing_plot" alt="Missing Values Heatmap">
-
-        <h3>Numeric Distributions</h3>
-        $histogram_section
-        $correlation_section
+<header class="nav">
+  <div class="nav-in">
+    <div class="brand">
+      <svg class="brand-mark" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" aria-hidden="true">
+        <rect x="3.2" y="3.2" width="17.6" height="17.6" rx="5.4"></rect>
+        <path d="M8 16.2V11M12 16.2V7.8M16 16.2v-3"></path>
+      </svg>
+      <span>statlens</span>
     </div>
+    <div class="nav-meta">
+      <span class="fname" id="src-name"></span>
+      <span class="fmeta" id="src-date"></span>
+    </div>
+    <div class="nav-act">
+      <button class="icon-btn theme-ic" id="theme-toggle" type="button" aria-label="Toggle color theme">
+        <svg class="i-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" aria-hidden="true">
+          <circle cx="12" cy="12" r="4.1"></circle>
+          <path d="M12 2.2v2.3M12 19.5v2.3M2.2 12h2.3M19.5 12h2.3M5.1 5.1l1.6 1.6M17.3 17.3l1.6 1.6M18.9 5.1l-1.6 1.6M6.7 17.3l-1.6 1.6"></path>
+        </svg>
+        <svg class="i-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <path d="M20 13.6A8 8 0 0 1 10.4 4a8.5 8.5 0 1 0 9.6 9.6z"></path>
+        </svg>
+      </button>
+      <button class="btn" id="pdf-btn" type="button">Download PDF</button>
+    </div>
+  </div>
+</header>
+
+<main class="wrap">
+  <section class="hero">
+    <p class="eyebrow"><span class="dot"></span>Statlens report</p>
+    <h1 class="display" id="hero-title">Dataset</h1>
+    <p class="lede" id="hero-lede"></p>
+  </section>
+</main>
+
+<section class="strip">
+  <div class="wrap strip-in" id="stat-strip"></div>
+</section>
+
+<main class="wrap">
+  <section class="sec" id="ai-sec">
+    <div class="card highlight">
+      <div class="card-ic">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <path d="M12 3l1.8 4.6L18 9l-4.2 1.8L12 15l-1.8-4.2L6 9l4.2-1.4z"></path>
+        </svg>
+      </div>
+      <h3>AI executive summary</h3>
+      <p>$ai_insights</p>
+    </div>
+  </section>
+
+  <section class="sec">
+    <div class="sec-head"><h2 class="h2">Machine learning suggestion</h2></div>
+    <div class="card" id="ml-card">
+      <div class="card-ic">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <path d="M12 3v4.5M12 16.5V21M3 12h4.5M16.5 12H21"></path>
+          <rect x="8" y="8" width="8" height="8" rx="2.6"></rect>
+        </svg>
+      </div>
+      <h3>Target, task, and baseline models</h3>
+    </div>
+  </section>
+
+  <section class="sec">
+    <div class="sec-head"><h2 class="h2">Data quality</h2></div>
+    <div class="acc" id="quality-acc"></div>
+  </section>
+
+  <section class="sec">
+    <div class="sec-head"><h2 class="h2">Visualizations</h2></div>
+    <div class="tabs" id="viz-tabs">
+      <button class="tab on" type="button" data-panel="panel-corr">Correlation</button>
+      <button class="tab" type="button" data-panel="panel-missing">Missingness</button>
+      <button class="tab" type="button" data-panel="panel-dist">Distributions</button>
+      <button class="tab" type="button" data-panel="panel-cat">Categorical</button>
+    </div>
+
+    <div class="viz-panel on" id="panel-corr">
+      <div class="viz-controls">
+        <label>Correlation threshold <input type="range" id="corr-threshold" min="0" max="100" value="0"></label>
+        <output id="corr-threshold-val"></output>
+      </div>
+      <div class="heatmap-scroll" id="corr-svg-wrap"></div>
+    </div>
+
+    <div class="viz-panel" id="panel-missing">
+      <div id="missing-wrap"></div>
+    </div>
+
+    <div class="viz-panel" id="panel-dist">
+      <div class="viz-controls">
+        <label>Column <select id="dist-col"></select></label>
+        <label>Bins <input type="range" id="dist-bins" min="5" max="60" value="20"></label>
+        <output id="dist-bins-val">20</output>
+        <label><input type="checkbox" id="dist-log"> Log scale</label>
+      </div>
+      <div id="dist-chart"></div>
+    </div>
+
+    <div class="viz-panel" id="panel-cat">
+      <div class="viz-controls">
+        <label>Column <select id="cat-col"></select></label>
+      </div>
+      <div id="cat-chart"></div>
+    </div>
+  </section>
+</main>
+
+<footer class="foot">
+  <div class="wrap foot-in">
+    <div class="foot-brand">
+      <svg class="foot-mark" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" aria-hidden="true">
+        <rect x="3.2" y="3.2" width="17.6" height="17.6" rx="5.4"></rect>
+        <path d="M8 16.2V11M12 16.2V7.8M16 16.2v-3"></path>
+      </svg>
+      <span>statlens</span>
+    </div>
+    <span>Generated by statlens <span id="foot-version"></span></span>
+  </div>
+</footer>
+
+<script type="application/json" id="statlens-data">$chart_data_json</script>
+<script>
+(function () {
+  'use strict';
+
+  var dataEl = document.getElementById('statlens-data');
+  var data = JSON.parse(dataEl.textContent);
+
+  var COLORS = {
+    light: { cool: [10, 95, 214], warm: [192, 67, 31], neutral: [245, 245, 247] },
+    dark: { cool: [111, 168, 255], warm: [255, 139, 102], neutral: [23, 26, 32] }
+  };
+
+  function isDark() {
+    return document.documentElement.getAttribute('data-theme') === 'dark';
+  }
+
+  function mixColor(base, accent, t) {
+    var r = Math.round(base[0] + (accent[0] - base[0]) * t);
+    var g = Math.round(base[1] + (accent[1] - base[1]) * t);
+    var b = Math.round(base[2] + (accent[2] - base[2]) * t);
+    return 'rgb(' + r + ',' + g + ',' + b + ')';
+  }
+
+  function corrColor(v) {
+    var palette = isDark() ? COLORS.dark : COLORS.light;
+    var t = Math.min(Math.abs(v), 1);
+    var accent = v >= 0 ? palette.cool : palette.warm;
+    return mixColor(palette.neutral, accent, t);
+  }
+
+  function el(tag, attrs, text) {
+    var node = document.createElement(tag);
+    if (attrs) {
+      for (var k in attrs) {
+        if (Object.prototype.hasOwnProperty.call(attrs, k)) node.setAttribute(k, attrs[k]);
+      }
+    }
+    if (text !== undefined) node.textContent = text;
+    return node;
+  }
+
+  function svgEl(tag, attrs) {
+    var node = document.createElementNS('http://www.w3.org/2000/svg', tag);
+    if (attrs) {
+      for (var k in attrs) {
+        if (Object.prototype.hasOwnProperty.call(attrs, k)) node.setAttribute(k, attrs[k]);
+      }
+    }
+    return node;
+  }
+
+  function fmtPct(n) {
+    return (Math.round(n * 10) / 10) + '%';
+  }
+
+  /* ---------- theme + nav ---------- */
+  function initTheme() {
+    var btn = document.getElementById('theme-toggle');
+    btn.addEventListener('click', function () {
+      var next = isDark() ? 'light' : 'dark';
+      document.documentElement.setAttribute('data-theme', next);
+      try { localStorage.setItem('statlens-report-theme', next); } catch (e) {}
+      renderCorrelation();
+    });
+  }
+
+  function initNav() {
+    document.title = 'Statlens Report - ' + data.meta.source;
+    document.getElementById('src-name').textContent = data.meta.source;
+    document.getElementById('src-date').textContent = data.meta.generated_at;
+    document.getElementById('foot-version').textContent = 'v' + data.meta.version;
+    document.getElementById('hero-title').textContent = data.meta.source;
+    var lede = data.overview.rows.toLocaleString() + ' rows, ' + data.overview.columns +
+      ' columns, generated ' + data.meta.generated_at;
+    document.getElementById('hero-lede').textContent = lede;
+    document.getElementById('pdf-btn').addEventListener('click', function () { window.print(); });
+  }
+
+  /* ---------- stat strip ---------- */
+  function initStats() {
+    var totalCells = data.overview.rows * data.overview.columns;
+    var missingCells = 0;
+    for (var col in data.missing) missingCells += data.missing[col].count;
+    var missingPct = totalCells > 0 ? (missingCells / totalCells) * 100 : 0;
+
+    var tiles = [
+      ['Rows', data.overview.rows.toLocaleString()],
+      ['Columns', String(data.overview.columns)],
+      ['Numerical', String(data.overview.numerical)],
+      ['Categorical', String(data.overview.categorical)],
+      ['Missing cells', fmtPct(missingPct)],
+      ['Duplicate rows', String(data.quality.Duplicate_Rows)]
+    ];
+    var strip = document.getElementById('stat-strip');
+    tiles.forEach(function (t) {
+      var wrap = el('div', { class: 'stat' });
+      wrap.appendChild(el('div', { class: 'n' }, t[1]));
+      wrap.appendChild(el('div', { class: 'l' }, t[0]));
+      strip.appendChild(wrap);
+    });
+  }
+
+  /* ---------- ML card ---------- */
+  function initMlCard() {
+    var ml = data.ml_suggestions;
+    var card = document.getElementById('ml-card');
+    var dl = el('dl', { class: 'meta' });
+    function row(k, v) {
+      var d = el('div');
+      d.appendChild(el('dt', null, k));
+      d.appendChild(el('dd', null, v));
+      dl.appendChild(d);
+    }
+    row('Target column', ml.Target_Column_Guess);
+    row('Task', ml.Task);
+    row('Suggested models', ml.Suggested_Models.join(', '));
+    row('Reasoning', ml.Reasoning);
+    card.appendChild(dl);
+  }
+
+  /* ---------- quality accordion ---------- */
+  var ICON_SVG = {
+    outliers: '<path d="M3 17.5l5-5 4 3 4-6 5 4"></path><circle cx="19" cy="6" r="2.3"></circle>',
+    id: '<rect x="3" y="4.5" width="18" height="15" rx="3"></rect><path d="M8.5 4.5v15"></path><path d="M12.5 9.5h5M12.5 14.5h5"></path>',
+    numtext: '<path d="M4 7.5V5.5h16v2"></path><path d="M9.5 5.5v13M14.5 5.5v13"></path><path d="M7 18.5h10"></path>',
+    skew: '<path d="M4 18.5c4 0 5-12 9-12s5 8 7 8"></path><path d="M3 21h18"></path>',
+    corr: '<circle cx="7" cy="8" r="2.9"></circle><circle cx="17" cy="16" r="2.9"></circle><path d="M10 8h4a3 3 0 0 1 0 6h-1"></path>'
+  };
+
+  function iconSpan(key) {
+    var span = el('span', { class: 'ac-ic' });
+    var svg = svgEl('svg', {
+      viewBox: '0 0 24 24', fill: 'none', stroke: 'currentColor',
+      'stroke-width': '1.5', 'stroke-linecap': 'round', 'stroke-linejoin': 'round'
+    });
+    svg.innerHTML = ICON_SVG[key];
+    span.appendChild(svg);
+    return span;
+  }
+
+  function chipList(names) {
+    var wrap = el('div', { class: 'chips' });
+    names.forEach(function (name) { wrap.appendChild(el('span', { class: 'chip' }, name)); });
+    return wrap;
+  }
+
+  function accordionRow(iconKey, title, summary, bodyBuilder) {
+    var ac = el('div', { class: 'ac' });
+    var btn = el('button', { class: 'ac-t', type: 'button', 'aria-expanded': 'false' });
+    btn.appendChild(iconSpan(iconKey));
+    var body = el('span', { class: 'ac-body' });
+    body.appendChild(el('span', { class: 'ac-title' }, title));
+    body.appendChild(el('span', { class: 'ac-s' }, summary));
+    btn.appendChild(body);
+    var x = el('span', { class: 'ac-x', 'aria-hidden': 'true' });
+    x.appendChild(el('i'));
+    x.appendChild(el('i'));
+    btn.appendChild(x);
+    ac.appendChild(btn);
+
+    var panel = el('div', { class: 'ac-p' });
+    var inner = el('div', { class: 'ac-c' });
+    var innerIn = el('div', { class: 'ac-c-in' });
+    bodyBuilder(innerIn);
+    inner.appendChild(innerIn);
+    panel.appendChild(inner);
+    ac.appendChild(panel);
+
+    btn.addEventListener('click', function () {
+      var open = ac.classList.toggle('open');
+      btn.setAttribute('aria-expanded', open ? 'true' : 'false');
+    });
+
+    return ac;
+  }
+
+  function initQuality() {
+    var q = data.quality;
+    var acc = document.getElementById('quality-acc');
+
+    var outlierCols = Object.keys(q.Outliers || {});
+    acc.appendChild(accordionRow('outliers', 'Outliers',
+      outlierCols.length ? outlierCols.length + ' column(s) with outlier values (IQR rule).' : 'No outliers detected.',
+      function (body) {
+        if (!outlierCols.length) { body.appendChild(el('p', { class: 'empty-note' }, 'Looks clean.')); return; }
+        var dl = el('dl', { class: 'meta' });
+        outlierCols.forEach(function (col) {
+          var info = q.Outliers[col];
+          var d = el('div');
+          d.appendChild(el('dt', null, col));
+          d.appendChild(el('dd', null, info.count + ' rows (' + info.percentage + '%)'));
+          dl.appendChild(d);
+        });
+        body.appendChild(dl);
+      }));
+
+    var idCols = q.Likely_ID_Columns || [];
+    acc.appendChild(accordionRow('id', 'Likely ID columns',
+      idCols.length ? idCols.length + ' near-unique column(s).' : 'None detected.',
+      function (body) {
+        if (!idCols.length) { body.appendChild(el('p', { class: 'empty-note' }, 'None detected.')); return; }
+        body.appendChild(chipList(idCols));
+      }));
+
+    var numTextCols = q.Possible_Numeric_As_Text || [];
+    acc.appendChild(accordionRow('numtext', 'Numbers stored as text',
+      numTextCols.length ? numTextCols.length + ' column(s) look numeric but are stored as text.' : 'None detected.',
+      function (body) {
+        if (!numTextCols.length) { body.appendChild(el('p', { class: 'empty-note' }, 'None detected.')); return; }
+        body.appendChild(chipList(numTextCols));
+      }));
+
+    var skewCols = Object.keys(q.Highly_Skewed_Columns || {});
+    var constCols = q.Constant_Columns || [];
+    var dupRows = q.Duplicate_Rows || 0;
+    var skewSummaryParts = [];
+    if (dupRows) skewSummaryParts.push(dupRows + ' duplicate row(s)');
+    if (constCols.length) skewSummaryParts.push(constCols.length + ' constant column(s)');
+    if (skewCols.length) skewSummaryParts.push(skewCols.length + ' skewed column(s)');
+    acc.appendChild(accordionRow('skew', 'Skew, constants, duplicates',
+      skewSummaryParts.length ? skewSummaryParts.join(', ') + '.' : 'Looks clean.',
+      function (body) {
+        var dl = el('dl', { class: 'meta' });
+        var d1 = el('div');
+        d1.appendChild(el('dt', null, 'Duplicate rows'));
+        d1.appendChild(el('dd', null, String(dupRows)));
+        dl.appendChild(d1);
+        var d2 = el('div');
+        d2.appendChild(el('dt', null, 'Constant columns'));
+        d2.appendChild(el('dd', null, constCols.length ? constCols.join(', ') : 'None'));
+        dl.appendChild(d2);
+        var d3 = el('div');
+        d3.appendChild(el('dt', null, 'Skewed columns'));
+        var skewText = skewCols.length
+          ? skewCols.map(function (c) { return c + ' (' + q.Highly_Skewed_Columns[c] + ')'; }).join(', ')
+          : 'None';
+        d3.appendChild(el('dd', null, skewText));
+        dl.appendChild(d3);
+        body.appendChild(dl);
+      }));
+
+    var pairs = data.high_correlations || [];
+    acc.appendChild(accordionRow('corr', 'Correlated pairs',
+      pairs.length ? pairs.length + ' pair(s) above the correlation threshold.' : 'No strong correlations detected.',
+      function (body) {
+        if (!pairs.length) { body.appendChild(el('p', { class: 'empty-note' }, 'No strong correlations detected.')); return; }
+        var dl = el('dl', { class: 'meta' });
+        pairs.forEach(function (p) {
+          var d = el('div');
+          d.appendChild(el('dt', null, p.feature_1 + ' <-> ' + p.feature_2));
+          d.appendChild(el('dd', null, String(p.score)));
+          dl.appendChild(d);
+        });
+        body.appendChild(dl);
+      }));
+  }
+
+  /* ---------- tabs ---------- */
+  function initTabs() {
+    var tabs = document.querySelectorAll('.tab');
+    tabs.forEach(function (tab) {
+      tab.addEventListener('click', function () {
+        tabs.forEach(function (t) { t.classList.remove('on'); });
+        document.querySelectorAll('.viz-panel').forEach(function (p) { p.classList.remove('on'); });
+        tab.classList.add('on');
+        document.getElementById(tab.getAttribute('data-panel')).classList.add('on');
+      });
+    });
+  }
+
+  /* ---------- correlation heatmap ---------- */
+  function renderCorrelation() {
+    var container = document.getElementById('corr-svg-wrap');
+    container.innerHTML = '';
+    var cols = data.correlation.columns;
+    var matrix = data.correlation.matrix;
+    if (!cols || cols.length < 2) {
+      container.appendChild(el('p', { class: 'empty-note' }, 'Not enough numeric columns to correlate.'));
+      return;
+    }
+    var n = cols.length;
+    var cell = Math.max(20, Math.min(42, Math.floor(600 / n)));
+    var left = 120, top = 100;
+    var w = left + n * cell, h = top + n * cell;
+    var svg = svgEl('svg', { class: 'heatmap-svg', viewBox: '0 0 ' + w + ' ' + h, width: String(w), height: String(h) });
+
+    var threshold = parseFloat(document.getElementById('corr-threshold').value) / 100;
+
+    for (var i = 0; i < n; i++) {
+      var cx = left + i * cell + cell / 2;
+      var labelTop = svgEl('text', {
+        x: String(cx), y: String(top - 8), 'font-size': '10', 'text-anchor': 'start',
+        transform: 'rotate(-45 ' + cx + ' ' + (top - 8) + ')'
+      });
+      labelTop.textContent = cols[i];
+      svg.appendChild(labelTop);
+
+      var labelLeft = svgEl('text', {
+        x: String(left - 8), y: String(top + i * cell + cell / 2 + 3),
+        'font-size': '10', 'text-anchor': 'end'
+      });
+      labelLeft.textContent = cols[i];
+      svg.appendChild(labelLeft);
+
+      for (var j = 0; j < n; j++) {
+        var v = matrix[i][j];
+        var rect = svgEl('rect', {
+          class: 'heatcell',
+          x: String(left + j * cell), y: String(top + i * cell),
+          width: String(cell - 1.5), height: String(cell - 1.5), rx: '3',
+          fill: v === null ? 'transparent' : corrColor(v),
+          opacity: (v === null || Math.abs(v) >= threshold) ? '1' : '0.16'
+        });
+        var title = svgEl('title', null);
+        title.textContent = cols[i] + ' x ' + cols[j] + ': ' + (v === null ? 'n/a' : v);
+        rect.appendChild(title);
+        svg.appendChild(rect);
+      }
+    }
+    container.appendChild(svg);
+  }
+
+  function initCorrelation() {
+    var slider = document.getElementById('corr-threshold');
+    var output = document.getElementById('corr-threshold-val');
+    function updateLabel() {
+      output.textContent = '|r| >= ' + (parseFloat(slider.value) / 100).toFixed(2);
+    }
+    slider.addEventListener('input', function () { updateLabel(); renderCorrelation(); });
+    updateLabel();
+    renderCorrelation();
+  }
+
+  /* ---------- missingness ---------- */
+  function initMissing() {
+    var container = document.getElementById('missing-wrap');
+    var rows = [];
+    for (var col in data.missing) {
+      if (data.missing[col].percent > 0) rows.push({ col: col, info: data.missing[col] });
+    }
+    if (!rows.length) {
+      container.appendChild(el('p', { class: 'empty-note' }, 'No missing values detected. Dataset looks complete.'));
+      return;
+    }
+    rows.sort(function (a, b) { return b.info.percent - a.info.percent; });
+    var wrap = el('div', { class: 'hbars' });
+    rows.forEach(function (r) {
+      var row = el('div', { class: 'hbar-row' });
+      row.appendChild(el('span', { class: 'label' }, r.col));
+      var track = el('span', { class: 'hbar-track' });
+      var fill = el('span', { class: 'hbar-fill' });
+      fill.style.width = Math.min(100, r.info.percent) + '%';
+      track.appendChild(fill);
+      row.appendChild(track);
+      row.appendChild(el('span', { class: 'val' }, r.info.percent + '% (' + r.info.count + ')'));
+      wrap.appendChild(row);
+    });
+    container.appendChild(wrap);
+  }
+
+  /* ---------- distributions ---------- */
+  function computeBins(values, binCount) {
+    var min = Math.min.apply(null, values);
+    var max = Math.max.apply(null, values);
+    var range = (max - min) || 1;
+    var width = range / binCount;
+    var counts = new Array(binCount);
+    for (var i = 0; i < binCount; i++) counts[i] = 0;
+    values.forEach(function (v) {
+      var idx = Math.floor((v - min) / width);
+      if (idx >= binCount) idx = binCount - 1;
+      if (idx < 0) idx = 0;
+      counts[idx]++;
+    });
+    return { min: min, max: max, counts: counts };
+  }
+
+  function renderHistogram() {
+    var select = document.getElementById('dist-col');
+    if (!select.value) return;
+    var col = select.value;
+    var binCount = parseInt(document.getElementById('dist-bins').value, 10);
+    var logScale = document.getElementById('dist-log').checked;
+    var container = document.getElementById('dist-chart');
+    container.innerHTML = '';
+
+    var entry = data.numeric[col];
+    if (!entry || !entry.samples.length) {
+      container.appendChild(el('p', { class: 'empty-note' }, 'No data for this column.'));
+      return;
+    }
+    var binned = computeBins(entry.samples, binCount);
+    var maxCount = Math.max.apply(null, binned.counts);
+    var chart = el('div', { class: 'barchart' });
+    binned.counts.forEach(function (c) {
+      var h = maxCount > 0 ? (logScale ? Math.log(c + 1) / Math.log(maxCount + 1) : c / maxCount) : 0;
+      var bar = el('div', { class: 'bar', title: String(c) });
+      bar.style.height = (h * 100) + '%';
+      chart.appendChild(bar);
+    });
+    container.appendChild(chart);
+    var labels = el('div', { class: 'barlabels' });
+    labels.appendChild(el('span', null, binned.min.toFixed(2)));
+    labels.appendChild(el('span', null, binned.max.toFixed(2)));
+    container.appendChild(labels);
+  }
+
+  function initDistributions() {
+    var cols = Object.keys(data.numeric);
+    var select = document.getElementById('dist-col');
+    var panel = document.getElementById('panel-dist');
+    if (!cols.length) {
+      panel.querySelector('.viz-controls').style.display = 'none';
+      document.getElementById('dist-chart').appendChild(el('p', { class: 'empty-note' }, 'No numeric columns to plot.'));
+      return;
+    }
+    cols.forEach(function (c) { select.appendChild(el('option', { value: c }, c)); });
+    select.addEventListener('change', renderHistogram);
+    document.getElementById('dist-bins').addEventListener('input', function (e) {
+      document.getElementById('dist-bins-val').textContent = e.target.value;
+      renderHistogram();
+    });
+    document.getElementById('dist-log').addEventListener('change', renderHistogram);
+    renderHistogram();
+  }
+
+  /* ---------- categorical ---------- */
+  function renderCategorical() {
+    var select = document.getElementById('cat-col');
+    if (!select.value) return;
+    var key = select.value;
+    var container = document.getElementById('cat-chart');
+    container.innerHTML = '';
+    var labels, counts;
+    if (data.categorical[key]) {
+      labels = data.categorical[key].labels.slice();
+      counts = data.categorical[key].counts.slice();
+      if (data.categorical[key].other_count > 0) {
+        labels.push('Other');
+        counts.push(data.categorical[key].other_count);
+      }
+    } else if (data.boolean[key]) {
+      labels = ['True', 'False'];
+      counts = [data.boolean[key].true_count, data.boolean[key].false_count];
+    } else {
+      container.appendChild(el('p', { class: 'empty-note' }, 'No data for this column.'));
+      return;
+    }
+    var maxCount = Math.max.apply(null, counts);
+    var wrap = el('div', { class: 'hbars' });
+    labels.forEach(function (label, i) {
+      var row = el('div', { class: 'hbar-row' });
+      row.appendChild(el('span', { class: 'label' }, label));
+      var track = el('span', { class: 'hbar-track' });
+      var fill = el('span', { class: 'hbar-fill' });
+      fill.style.background = 'var(--cool)';
+      fill.style.width = (maxCount > 0 ? (counts[i] / maxCount) * 100 : 0) + '%';
+      track.appendChild(fill);
+      row.appendChild(track);
+      row.appendChild(el('span', { class: 'val' }, String(counts[i])));
+      wrap.appendChild(row);
+    });
+    container.appendChild(wrap);
+  }
+
+  function initCategorical() {
+    var select = document.getElementById('cat-col');
+    var keys = Object.keys(data.categorical).concat(Object.keys(data.boolean));
+    if (!keys.length) {
+      document.getElementById('panel-cat').querySelector('.viz-controls').style.display = 'none';
+      document.getElementById('cat-chart').appendChild(el('p', { class: 'empty-note' }, 'No categorical or boolean columns.'));
+      return;
+    }
+    keys.forEach(function (k) { select.appendChild(el('option', { value: k }, k)); });
+    select.addEventListener('change', renderCategorical);
+    renderCategorical();
+  }
+
+  /* ---------- boot ---------- */
+  initTheme();
+  initNav();
+  initStats();
+  initMlCard();
+  initQuality();
+  initTabs();
+  initCorrelation();
+  initMissing();
+  initDistributions();
+  initCategorical();
+})();
+</script>
 </body>
 </html>

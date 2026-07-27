@@ -6,13 +6,7 @@ from typing import Optional, Sequence
 
 from .analyzer import analyze
 from .report import report
-
-
-def _json_default(value: object) -> object:
-    """Fallback encoder for numpy scalar types that json.dumps can't handle natively."""
-    if hasattr(value, "item"):
-        return value.item()
-    return str(value)
+from .utils import json_default
 
 
 def build_parser() -> argparse.ArgumentParser:
@@ -43,7 +37,7 @@ def main(argv: Optional[Sequence[str]] = None) -> None:
 
     if args.json_path:
         with open(args.json_path, "w", encoding="utf-8") as f:
-            json.dump(results, f, indent=2, default=_json_default)
+            json.dump(results, f, indent=2, default=json_default)
         print(f"📄 Results written to '{args.json_path}'")
 
     report(args.path, output=args.output, results=results, include_ai=not args.no_ai)

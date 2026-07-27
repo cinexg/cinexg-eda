@@ -1,4 +1,5 @@
 import json
+import re
 
 import pandas as pd
 
@@ -37,3 +38,19 @@ def test_cli_generates_html_and_json(tmp_path, monkeypatch):
     html_content = html_path.read_text(encoding="utf-8")
     assert "AI executive summary skipped" in html_content
     assert "$" not in html_content  # no unresolved template placeholders
+
+    # report() no longer shells out to matplotlib/seaborn for PNGs; the report
+    # is a single file with an embedded JSON blob driving inline SVG/JS charts.
+    assert not (tmp_path / "eda_assets").exists()
+
+    match = re.search(
+        r'<script type="application/json" id="statlens-data">(.*?)</script>',
+        html_content,
+        re.DOTALL,
+    )
+    assert match is not None
+    chart_data = json.loads(match.group(1))
+    for key in ("meta", "overview", "missing", "correlation", "numeric", "categorical", "quality"):
+        assert key in chart_data
+    assert chart_data["overview"]["rows"] == 5
+    assert chart_data["correlation"]["columns"] == ["age", "salary"]

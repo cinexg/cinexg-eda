@@ -40,3 +40,15 @@ def is_numeric_like(series: pd.Series, threshold: float = 0.95) -> bool:
         return False
     parsed = pd.to_numeric(non_null, errors="coerce")
     return parsed.notna().mean() >= threshold
+
+
+def json_default(value: object) -> object:
+    """Fallback encoder for numpy scalar types that json.dumps can't handle natively.
+
+    Shared by the CLI's --json export and report.py's embedded chart-data JSON,
+    both of which serialize analyze() results that carry numpy float64/int64
+    scalars (e.g. from Series.round().to_dict()).
+    """
+    if hasattr(value, "item"):
+        return value.item()
+    return str(value)

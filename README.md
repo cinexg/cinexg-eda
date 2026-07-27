@@ -1,3 +1,7 @@
+<p align="center">
+  <img src="assets/logo.svg" width="64" height="64" alt="statlens logo">
+</p>
+
 # statlens
 
 [![Python package](https://github.com/gauravxsuvo/Statlens/actions/workflows/python-package.yml/badge.svg)](https://github.com/gauravxsuvo/Statlens/actions/workflows/python-package.yml)
@@ -188,15 +192,9 @@ Planned improvements include:
 
 ## Contributing
 
-Contributions are welcome. If you would like to improve the package, feel free to open
-an issue or submit a pull request.
-
-Steps:
-
-1. Fork the repository
-2. Create a new branch
-3. Implement your changes
-4. Submit a pull request
+Contributions are welcome. See CONTRIBUTING.md for development setup, coding
+guidelines, and the pull request process. Please also review CODE_OF_CONDUCT.md
+before participating.
 
 ---
 
